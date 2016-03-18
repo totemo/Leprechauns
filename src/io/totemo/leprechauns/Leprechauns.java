@@ -63,7 +63,7 @@ import com.google.common.collect.Lists;
  * death point.</li>
  * <li>The POG is marked with a rainbow of coloured particles. If the player
  * breaks it or moves to within 5 blocks of it, then it disappears and drops
- * configurable loot (typically gold carrots, ingots and nuggets).</li>
+ * configurable loot (typically golden carrots, ingots and nuggets).</li>
  * </ul>
  */
 public class Leprechauns extends JavaPlugin implements Listener {
