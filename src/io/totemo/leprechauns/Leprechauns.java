@@ -46,9 +46,8 @@ import com.google.common.collect.Lists;
  * <ul>
  * <li>The plugin affects hostile mobs in a single configured world (by default,
  * the overworld) only. Spawner mobs are not modified.</li>
- * <li>Affected hostile mobs are replaced with baby zombies dressed in green
- * leather armour (or skinned with a server reosource pack), referred to as
- * leprechauns.</li>
+ * <li>Affected hostile mobs are replaced with zombies dressed in green leather
+ * armour (or skinned with a server resource pack), referred to as leprechauns.</li>
  * <li>For custom mobs to drop special drops when they die, they must have been
  * recently hurt by a player.</li>
  * <li>Leprechauns are armed with shillelaghs (enchanted sticks) and shamrocks
@@ -56,7 +55,6 @@ import com.google.common.collect.Lists;
  * <li>Leprechauns also drop various potions named as alcoholic beverages, as
  * well as gold nuggets named as coins.</li>
  * <li>Leprechauns have custom Irish names.</li>
- * <li>Injured leprechauns run away from the player.</li>
  * <li>A small percentage of leprechauns drop a piece of paper named a
  * "Treasure Map", which has as its lore the coordinates of a pot of gold (POG).
  * </li>
