@@ -23,7 +23,6 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
@@ -66,7 +65,7 @@ import com.google.common.collect.Lists;
  * death point.</li>
  * <li>The POG is marked with a rainbow of coloured particles. If the player
  * breaks it or moves to within 5 blocks of it, then it disappears and drops
- * configurable loot (typically gold blocks, ingots and nuggets).</li>
+ * configurable loot (typically gold carrots, ingots and nuggets).</li>
  * </ul>
  */
 public class Leprechauns extends JavaPlugin implements Listener {
@@ -134,8 +133,8 @@ public class Leprechauns extends JavaPlugin implements Listener {
 
     // ------------------------------------------------------------------------
     /**
-     * In the configured World, replace all hostile natural spawns with baby
-     * zombies, dressed as leprechauns.
+     * In the configured World, replace all hostile natural spawns with zombies,
+     * dressed as leprechauns.
      *
      * Spawner-spawned mobs are not affected in any way.
      */
@@ -155,15 +154,6 @@ public class Leprechauns extends JavaPlugin implements Listener {
                 getLogger().info("Spawned leprechaun at " + Util.formatLocation(loc));
             }
         }
-    }
-
-    // ------------------------------------------------------------------------
-    /**
-     * When the plugin is disabled, remove all spawned pots of gold.
-     */
-    @EventHandler(ignoreCancelled = true)
-    public void onPluginDisable(@SuppressWarnings("unused") PluginDisableEvent event) {
-
     }
 
     // ------------------------------------------------------------------------
