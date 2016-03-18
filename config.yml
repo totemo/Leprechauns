@@ -1,0 +1,77 @@
+debug:
+  death: false
+  remove: false
+  spawn:
+    natural: false
+
+world:
+  name: world
+  border: 2990
+
+leprechaun:
+  health: 20
+  baby_chance: 0.2
+
+armour:
+  worn: false
+  drop_chance: 0.01
+
+pots:
+  # Chance of a pot of gold spwning upon leprechaun death.
+  chance: 0.16
+
+  # Maximum number of pots of gold allowed in the world simultaneously.
+  max: 30
+
+  # Extra ticks of time given to the player to find the pot.
+  extra_ticks: 1200
+
+  # Range of distances from leprechaun death point that a pot will spawn.
+  range:
+    min: 100
+    max: 300
+
+  # Pot will exist in the world for range / min_player_speed seconds.
+  # The player must move faster than this to reach the pot in time.
+  min_player_speed: 3.0
+
+# Kathleen, Connor, Sean, Patrick
+messages:
+  names:
+    colour: '&2'
+    first:
+    - Aidan
+    - Conor
+    - Declan
+    - Donal
+    - Dougal
+    - Fergal
+    - Finn
+    - Kieran
+    - Liam
+    - Paddy
+    - Patrick
+    - Rory
+    - Ryan
+    - Seamus
+    - Sean
+
+    surname:
+    - Fitzgerald
+    - Fitzpatrick
+    - Flanagan
+    - Kelly
+    - McStereotype
+    - McCormack
+    - McLoughlin
+    - McNamara
+    - Mulligan
+    - Murphy
+    - O'Sullivan
+    - O'Brien
+    - O'Connor
+    - O'Gallagher
+    - O'Malley
+    - O'Reilly
+    - O'Shea
+    - O'Sullivan

@@ -1,0 +1,19 @@
+name: ${project.name}
+version: ${project.version}
+author: totemo
+authors: [totemo]
+description: ${project.description}
+website: ${project.url}
+main: io.totemo.leprechauns.Leprechauns
+
+permissions:
+  leprechauns.admin:
+    description: Permission to administer the plugin.
+    default: op
+
+commands:
+  leprechauns:
+    description: ${project.name} administrative command.
+    permission: leprechauns.admin
+    usage: |
+      /<command> reload: Reload the configuration.
