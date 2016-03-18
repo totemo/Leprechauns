@@ -51,7 +51,7 @@ import com.google.common.collect.Lists;
  * <li>For custom mobs to drop special drops when they die, they must have been
  * recently hurt by a player.</li>
  * <li>Leprechauns are armed with shillelaghs (enchanted sticks) and shamrocks
- * (enchanted lily pads), with a small chance of the held item dropping.</li>
+ * (enchanted long grass), with a small chance of the held item dropping.</li>
  * <li>Leprechauns also drop various potions named as alcoholic beverages, as
  * well as gold nuggets named as coins.</li>
  * <li>Leprechauns have custom Irish names.</li>
