@@ -11,13 +11,14 @@ following features:
  * The plugin affects hostile mobs in a single configured world (by default,
    the overworld) only. Spawner mobs are not modified.
  * Affected hostile mobs are replaced with zombies dressed in leather armour
-   (or skinned with a server reosource pack), referred to as leprechauns.
+   (or skinned with a server resource pack), referred to as leprechauns.
  * For custom mobs to drop special drops when they die, they must have been
    recently hurt by a player.
+ * The drop chance is improved by a looting sword.
  * Leprechauns are armed with shillelaghs (enchanted sticks) and shamrocks
    (enchanted long grass), with a small chance of the held item dropping.
  * Leprechauns also drop various potions named as alcoholic beverages, as well
-   as gold nuggets named as coins.
+   as gold nuggets.
  * Leprechauns have custom Irish names.
  * A small percentage of leprechauns drop a piece of paper named a "Treasure
    Map", which has as its lore the coordinates of a pot of gold (POG).
@@ -53,8 +54,8 @@ Minecraft 1.9 Compatibility Issues
 ----------------------------------
 Preliminary testing on a 1.9 Spigot server revealed that:
 
- * The XP level-up sound enum has changed it's name in 1.9 and the would need
-   to be renamed in the code for 1.9 compatibility.
+ * The XP level-up sound enum has changed its name in 1.9 and would need to be
+   renamed in the code for 1.9 compatibility.
  * The Zombie.setVillager(false) statement in the code does not appear to be
    doing anything at all, and would need to change to
    Zombie.setVillagerProfession(null).
