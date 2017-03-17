@@ -1,6 +1,6 @@
 debug:
+  config: true
   death: false
-  remove: false
   spawn:
     natural: false
 
@@ -9,33 +9,207 @@ world:
   border: 2990
 
 leprechaun:
-  health: 20
+  health: 25
   baby_chance: 0.2
-
-armour:
-  worn: false
-  drop_chance: 0.01
+  villager_chance: 0.6
+  weapon_drop_chance: 0.05
+  armour:
+    worn: false
+    drop_chance: 0.0075
 
 pots:
-  # Chance of a pot of gold spwning upon leprechaun death.
-  chance: 0.16
+  # Chance of a pot of gold spawning upon leprechaun death.
+  chance: 0.05
 
   # Maximum number of pots of gold allowed in the world simultaneously.
   max: 30
-
-  # Extra ticks of time given to the player to find the pot.
-  extra_ticks: 1200
 
   # Range of distances from leprechaun death point that a pot will spawn.
   range:
     min: 100
     max: 300
 
+  # Extra ticks of time given to the player to find the pot.
+  extra_ticks: 800
+
   # Pot will exist in the world for range / min_player_speed seconds.
   # The player must move faster than this to reach the pot in time.
   min_player_speed: 3.0
 
-# Kathleen, Connor, Sean, Patrick
+  map:
+    name: '&6Treasure Map'
+    lore: 'Aye, ye got me!|Me treasure is at {0}.|But ye better shake a leg!|Nothing lasts forever.'
+
+  particle:
+    radius: 2.0
+    count: 25
+
+
+drops:
+  regular:
+    gold_nugget:
+      chance: 0.05
+      min: 1
+      max: 3
+      item:
+        ==: org.bukkit.inventory.ItemStack
+        type: GOLD_NUGGET
+    potato:
+      chance: 0.05
+      item:
+        ==: org.bukkit.inventory.ItemStack
+        type: POTATO_ITEM
+    baked_potato:
+      chance: 0.05
+      item:
+        ==: org.bukkit.inventory.ItemStack
+        type: BAKED_POTATO
+    rotten_potato:
+      chance: 0.05
+      item:
+        ==: org.bukkit.inventory.ItemStack
+        type: POISONOUS_POTATO
+
+  special:
+    gold_ingot:
+      chance: 0.1
+      min: 1
+      max: 2
+      item:
+        ==: org.bukkit.inventory.ItemStack
+        type: GOLD_INGOT
+    whiskey:
+      chance: 0.01
+      item:
+        ==: org.bukkit.inventory.ItemStack
+        type: POTION
+        meta:
+          ==: ItemMeta
+          meta-type: POTION
+          display-name: §6Whiskey
+          custom-effects:
+          - ==: PotionEffect
+            effect: 26
+            duration: 1200
+            amplifier: 1
+            ambient: true
+            has-particles: true
+          - ==: PotionEffect
+            effect: 15
+            duration: 600
+            amplifier: 1
+            ambient: true
+            has-particles: true
+          - ==: PotionEffect
+            effect: 9
+            duration: 1200
+            amplifier: 1
+            ambient: true
+            has-particles: true
+    guinness:
+      chance: 0.01
+      item:
+        ==: org.bukkit.inventory.ItemStack
+        type: POTION
+        meta:
+          ==: ItemMeta
+          meta-type: POTION
+          display-name: §fGuinness
+          custom-effects:
+          - ==: PotionEffect
+            effect: 6
+            duration: 1
+            amplifier: 0
+            ambient: true
+            has-particles: true
+          - ==: PotionEffect
+            effect: 15
+            duration: 1200
+            amplifier: 1
+            ambient: true
+            has-particles: true
+
+  pots:
+    gold_helmet:
+      chance: 0.1
+      item:
+        ==: org.bukkit.inventory.ItemStack
+        type: GOLD_HELMET
+    gold_chestplate:
+      chance: 0.1
+      item:
+        ==: org.bukkit.inventory.ItemStack
+        type: GOLD_CHESTPLATE
+    gold_leggings:
+      chance: 0.1
+      item:
+        ==: org.bukkit.inventory.ItemStack
+        type: GOLD_LEGGINGS
+    gold_boots:
+      chance: 0.1
+      item:
+        ==: org.bukkit.inventory.ItemStack
+        type: GOLD_BOOTS
+    gold_axe:
+      chance: 0.1
+      item:
+        ==: org.bukkit.inventory.ItemStack
+        type: GOLD_AXE
+    gold_sword:
+      chance: 0.1
+      item:
+        ==: org.bukkit.inventory.ItemStack
+        type: GOLD_SWORD
+    watch:
+      chance: 0.1
+      item:
+        ==: org.bukkit.inventory.ItemStack
+        type: WATCH
+    gold_nugget:
+      chance: 0.5
+      min: 3
+      max: 6
+      item:
+        ==: org.bukkit.inventory.ItemStack
+        type: GOLD_NUGGET
+    gold_ingot:
+      chance: 0.5
+      min: 3
+      max: 6
+      item:
+        ==: org.bukkit.inventory.ItemStack
+        type: GOLD_INGOT
+    gold_block:
+      chance: 0.2
+      min: 1
+      max: 2
+      item:
+        ==: org.bukkit.inventory.ItemStack
+        type: GOLD_BLOCK
+    gold_barding:
+      chance: 0.1
+      item:
+        ==: org.bukkit.inventory.ItemStack
+        type: GOLD_BARDING
+    golden_apple:
+      chance: 0.2
+      item:
+        ==: org.bukkit.inventory.ItemStack
+        type: GOLDEN_APPLE
+    notch_apple:
+      chance: 0.1
+      item:
+        ==: org.bukkit.inventory.ItemStack
+        type: GOLDEN_APPLE
+        damage: 1
+    golden_carrot:
+      chance: 0.4
+      min: 1
+      max: 3
+      item:
+        ==: org.bukkit.inventory.ItemStack
+        type: GOLDEN_CARROT
+
 messages:
   names:
     colour: '&2'

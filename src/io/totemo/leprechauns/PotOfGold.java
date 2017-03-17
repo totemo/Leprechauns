@@ -1,8 +1,7 @@
 package io.totemo.leprechauns;
 
-import java.util.Random;
-
 import org.bukkit.Color;
+import org.bukkit.Effect;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
@@ -14,10 +13,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Firework;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.FireworkMeta;
-
-import com.darkblade12.particleeffect.ParticleEffect;
 
 // ----------------------------------------------------------------------------
 /**
@@ -84,7 +80,12 @@ public class PotOfGold {
             return false;
         }
 
-        ParticleEffect.REDSTONE.display(2.0f, 2.0f, 2.0f, 1.0f, 100, _location, 32);
+        World.Spigot spigot = _location.getWorld().spigot();
+        spigot.playEffect(_location, Effect.COLOURED_DUST, 0, 0,
+                          Leprechauns.CONFIG.POTS_PARTICLE_RADIUS,
+                          Leprechauns.CONFIG.POTS_PARTICLE_RADIUS,
+                          Leprechauns.CONFIG.POTS_PARTICLE_RADIUS,
+                          1.0f, Leprechauns.CONFIG.POTS_PARTICLE_COUNT, 64);
         for (Entity entity : _location.getWorld().getNearbyEntities(_location, 5, 5, 5)) {
             if (entity instanceof Player) {
                 spawnLoot((Player) entity);
@@ -102,19 +103,14 @@ public class PotOfGold {
      */
     public void spawnLoot(Player player) {
         Leprechauns.PLUGIN.getLogger().info("Pot broken by " + player.getName() + " " + Util.formatLocation(getLocation()));
-
         spawnFirework();
 
         World world = _location.getWorld();
-        world.playSound(_location, Sound.LEVEL_UP, 20, 1);
-        world.dropItemNaturally(_location, new ItemStack(Material.GOLD_INGOT, Util.random(1, 10)));
-        world.dropItemNaturally(_location, new ItemStack(Material.GOLD_NUGGET, Util.random(1, 10)));
-        world.dropItemNaturally(_location, new ItemStack(Material.GOLDEN_CARROT, Util.random(1, 5)));
-        if (Math.random() < 0.25) {
-            world.dropItemNaturally(_location, new ItemStack(Material.GOLDEN_APPLE, 1, (short) 1));
-        }
-        if (Math.random() < 0.25) {
-            world.dropItemNaturally(_location, new ItemStack(Material.GOLD_BARDING, 1));
+        world.playSound(getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 3, 1);
+        for (Drop drop : Leprechauns.CONFIG.DROPS_POTS) {
+            if (Math.random() < drop.getDropChance()) {
+                world.dropItemNaturally(_location, drop.generate());
+            }
         }
     }
 
@@ -134,21 +130,21 @@ public class PotOfGold {
                 builder.withTrail();
             }
 
-            builder.with(FIREWORK_TYPES[_random.nextInt(FIREWORK_TYPES.length)]);
-            final int primaryColors = 1 + _random.nextInt(4);
+            builder.with(FIREWORK_TYPES[Util.randomInt(FIREWORK_TYPES.length)]);
+            final int primaryColors = 1 + Util.randomInt(4);
             for (int i = 0; i < primaryColors; ++i) {
-                int darker = _random.nextInt(128);
-                builder.withColor(Color.fromRGB(255 - darker / 2, 255 - darker, _random.nextInt(64)));
+                int darker = Util.randomInt(128);
+                builder.withColor(Color.fromRGB(255 - darker / 2, 255 - darker, Util.randomInt(64)));
             }
 
-            final int fadeColors = 1 + _random.nextInt(3);
+            final int fadeColors = 1 + Util.randomInt(3);
             builder.withFade(Color.fromRGB(255, 255, 255));
             for (int i = 0; i < fadeColors; ++i) {
-                builder.withColor(Color.fromRGB(255, 255, 128 + _random.nextInt(64)));
+                builder.withColor(Color.fromRGB(255, 255, 128 + Util.randomInt(64)));
             }
 
             FireworkMeta meta = firework.getFireworkMeta();
-            meta.setPower(_random.nextInt(2));
+            meta.setPower(Util.randomInt(2));
             meta.addEffect(builder.build());
             firework.setFireworkMeta(meta);
         }
@@ -167,11 +163,6 @@ public class PotOfGold {
      * Firework types.
      */
     protected static final FireworkEffect.Type[] FIREWORK_TYPES = { Type.BALL, Type.BALL_LARGE, Type.STAR, Type.BURST };
-
-    /**
-     * Random number generator.
-     */
-    protected Random _random = new Random();
 
     /**
      * Location of the pot of gold.

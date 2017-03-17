@@ -106,14 +106,6 @@ public class PotManager {
             if (pot != null) {
                 return pot;
             }
-
-            // TODO Remove this code once you are certain that the above works.
-            for (Entry<Block, PotOfGold> entry : _pots.entrySet()) {
-                if (entry.getKey().equals(block)) {
-                    Leprechauns.PLUGIN.getLogger().warning("Needed to do a linear search for pot.");
-                    return entry.getValue();
-                }
-            }
         }
         return null;
     }

@@ -1,5 +1,7 @@
 package io.totemo.leprechauns;
 
+import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -7,15 +9,20 @@ import org.bukkit.ChatColor;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Villager.Profession;
 import org.bukkit.entity.Zombie;
+import org.bukkit.entity.ZombieVillager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -26,45 +33,16 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.material.MaterialData;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
-
-import com.darkblade12.particleeffect.ParticleEffect;
-import com.google.common.collect.Lists;
 
 // ----------------------------------------------------------------------------
 /**
  * Leprechauns plugin, command handling and event handler.
  *
  * Leprechauns turns hostile mobs into leprechauns.
- *
- * The main features are:
- * <ul>
- * <li>The plugin affects hostile mobs in a single configured world (by default,
- * the overworld) only. Spawner mobs are not modified.</li>
- * <li>Affected hostile mobs are replaced with zombies dressed in green leather
- * armour (or skinned with a server resource pack), referred to as leprechauns.</li>
- * <li>For custom mobs to drop special drops when they die, they must have been
- * recently hurt by a player.</li>
- * <li>Leprechauns are armed with shillelaghs (enchanted sticks) and shamrocks
- * (enchanted long grass), with a small chance of the held item dropping.</li>
- * <li>Leprechauns also drop various potions named as alcoholic beverages, as
- * well as gold nuggets named as coins.</li>
- * <li>Leprechauns have custom Irish names.</li>
- * <li>A small percentage of leprechauns drop a piece of paper named a
- * "Treasure Map", which has as its lore the coordinates of a pot of gold (POG).
- * </li>
- * <li>A POG is a cauldron that is spawned into the affected world (only) for a
- * limited period of time within a range of distances from the leprechaun's
- * death point.</li>
- * <li>The POG is marked with a rainbow of coloured particles. If the player
- * breaks it or moves to within 5 blocks of it, then it disappears and drops
- * configurable loot (typically golden carrots, ingots and nuggets).</li>
- * </ul>
  */
 public class Leprechauns extends JavaPlugin implements Listener {
     /**
@@ -180,10 +158,9 @@ public class Leprechauns extends JavaPlugin implements Listener {
 
     // ------------------------------------------------------------------------
     /**
-     * Tag disguised mobs hurt by players.
+     * Tag special mobs hurt by players.
      *
-     * Only those disguised mobs hurt recently by players will have special
-     * drops.
+     * Only those mobs hurt recently by players will have special drops.
      */
     @EventHandler(ignoreCancelled = true)
     public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
@@ -192,13 +169,20 @@ public class Leprechauns extends JavaPlugin implements Listener {
         }
 
         Entity entity = event.getEntity();
-        if (entity.hasMetadata(LEPRECHAUN_KEY)) {
+        if (entity instanceof LivingEntity && !(entity instanceof ArmorStand)) {
+            Location loc = entity.getLocation();
+            loc.getWorld().spawnParticle(Particle.BLOCK_DUST, loc, 20, 0.5f, 0.5f, 0.5f, new MaterialData(Material.NETHER_WART_BLOCK));
+            // loc.getWorld().spigot().playEffect(loc, Effect.TILE_DUST, 214, 0,
+            // 0.5f, 0.5f, 0.5f, 0, 20, 32);
+        }
+
+        if (isLeprechaun(entity)) {
             int lootingLevel = 0;
             boolean isPlayerAttack = false;
             if (event.getDamager() instanceof Player) {
                 isPlayerAttack = true;
                 Player player = (Player) event.getDamager();
-                lootingLevel = player.getItemInHand().getEnchantmentLevel(Enchantment.LOOT_BONUS_MOBS);
+                lootingLevel = player.getEquipment().getItemInMainHand().getEnchantmentLevel(Enchantment.LOOT_BONUS_MOBS);
             } else if (event.getDamager() instanceof Projectile) {
                 Projectile projectile = (Projectile) event.getDamager();
                 if (projectile.getShooter() instanceof Player) {
@@ -216,7 +200,7 @@ public class Leprechauns extends JavaPlugin implements Listener {
 
     // ------------------------------------------------------------------------
     /**
-     * On leprechaun death, do special drops if a player hurt the mob recently.
+     * On mob death, do special drops if a player hurt the mob recently.
      */
     @EventHandler(ignoreCancelled = true)
     public void onEntityDeath(EntityDeathEvent event) {
@@ -226,9 +210,10 @@ public class Leprechauns extends JavaPlugin implements Listener {
 
         Entity entity = event.getEntity();
         if (isLeprechaun(entity)) {
-            handleDeath(entity);
+            if (CONFIG.DEBUG_DEATH) {
+                getLogger().info("Mob died at " + Util.formatLocation(entity.getLocation()));
+            }
 
-            // Do custom drops.
             int lootingLevel = getLootingLevelMeta(entity);
             boolean specialDrops = false;
             Long damageTime = getPlayerDamageTime(entity);
@@ -245,28 +230,36 @@ public class Leprechauns extends JavaPlugin implements Listener {
 
     // ------------------------------------------------------------------------
     /**
-     * Spawn a leprechaun at the specified location.
+     * Spawn a Leprechaun at the specified location.
      *
      * @param loc the location.
      */
     protected Zombie spawnLeprechaun(Location loc) {
-        Zombie leprechaun = (Zombie) loc.getWorld().spawnEntity(loc, EntityType.ZOMBIE);
+        Zombie leprechaun;
+        boolean isVillager = (CONFIG.LEPRECHAUN_VILLAGER_CHANCE < 0.0001) ? false
+                                                                          : (Math.random() < CONFIG.LEPRECHAUN_VILLAGER_CHANCE);
+        if (isVillager) {
+            ZombieVillager zombager = (ZombieVillager) loc.getWorld().spawnEntity(loc, EntityType.ZOMBIE_VILLAGER);
+            zombager.setVillagerProfession(VILLAGER_PROFESSIONS[Util.randomInt(VILLAGER_PROFESSIONS.length)]);
+            leprechaun = zombager;
+        } else {
+            leprechaun = (Zombie) loc.getWorld().spawnEntity(loc, EntityType.ZOMBIE);
+        }
+
         // Don't allow players to steal the weapon by throwing items.
         leprechaun.setCanPickupItems(false);
         leprechaun.getEquipment().clear();
         leprechaun.setMaxHealth(CONFIG.LEPRECHAUN_HEALTH);
         leprechaun.setHealth(CONFIG.LEPRECHAUN_HEALTH);
-        leprechaun.setVillager(false);
-        if (Math.random() < CONFIG.LEPRECHAUN_BABY_CHANCE) {
-            leprechaun.setBaby(true);
-        }
+        leprechaun.setBaby(Math.random() < CONFIG.LEPRECHAUN_BABY_CHANCE);
+
         leprechaun.setCustomNameVisible(true);
         leprechaun.setCustomName(CONFIG.randomLeprechaunName());
         leprechaun.setMetadata(LEPRECHAUN_KEY, LEPRECHAUN_META);
-        leprechaun.getEquipment().setItemInHand(makeCustomWeapon());
-        leprechaun.getEquipment().setItemInHandDropChance(0.16f);
+        leprechaun.getEquipment().setItemInMainHand(makeCustomWeapon());
+        leprechaun.getEquipment().setItemInMainHandDropChance((float) CONFIG.LEPRECHAUN_WEAPON_DROP_CHANCE);
 
-        if (CONFIG.ARMOUR_WORN) {
+        if (CONFIG.LEPRECHAUN_ARMOUR_WORN) {
             ItemStack helmet = new ItemStack(Material.LEATHER_HELMET, 1, (short) Util.random(1, 30));
             ItemStack chestPlate = new ItemStack(Material.LEATHER_CHESTPLATE, 1, (short) Util.random(1, 30));
             ItemStack leggings = new ItemStack(Material.LEATHER_LEGGINGS, 1, (short) Util.random(1, 30));
@@ -275,10 +268,10 @@ public class Leprechauns extends JavaPlugin implements Listener {
             leprechaun.getEquipment().setChestplate(dyeLeatherArmour(chestPlate, Color.LIME));
             leprechaun.getEquipment().setLeggings(dyeLeatherArmour(leggings, Color.LIME));
             leprechaun.getEquipment().setBoots(dyeLeatherArmour(boots, Color.BLACK));
-            leprechaun.getEquipment().setHelmetDropChance(CONFIG.ARMOUR_DROP_CHANCE);
-            leprechaun.getEquipment().setChestplateDropChance(CONFIG.ARMOUR_DROP_CHANCE);
-            leprechaun.getEquipment().setLeggingsDropChance(CONFIG.ARMOUR_DROP_CHANCE);
-            leprechaun.getEquipment().setBootsDropChance(CONFIG.ARMOUR_DROP_CHANCE);
+            leprechaun.getEquipment().setHelmetDropChance(CONFIG.LEPRECHAUN_ARMOUR_DROP_CHANCE);
+            leprechaun.getEquipment().setChestplateDropChance(CONFIG.LEPRECHAUN_ARMOUR_DROP_CHANCE);
+            leprechaun.getEquipment().setLeggingsDropChance(CONFIG.LEPRECHAUN_ARMOUR_DROP_CHANCE);
+            leprechaun.getEquipment().setBootsDropChance(CONFIG.LEPRECHAUN_ARMOUR_DROP_CHANCE);
         }
         return leprechaun;
     } // spawnLeprechaun
@@ -366,22 +359,6 @@ public class Leprechauns extends JavaPlugin implements Listener {
 
     // ------------------------------------------------------------------------
     /**
-     * Handle the death of a disguised mob by showing death particle effects and
-     * removing the disguise.
-     *
-     * @param mob the mob.
-     */
-    protected void handleDeath(Entity mob) {
-        Location loc = mob.getLocation();
-        ParticleEffect.REDSTONE.display(0.3f, 0.3f, 0.3f, 0, 20, loc, 32);
-
-        if (CONFIG.DEBUG_DEATH) {
-            getLogger().info("Leprechaun died at " + Util.formatLocation(loc));
-        }
-    }
-
-    // ------------------------------------------------------------------------
-    /**
      * Clear the default drops and add in custom ones.
      *
      * @param leprechaun the dropping mob.
@@ -392,58 +369,36 @@ public class Leprechauns extends JavaPlugin implements Listener {
      */
     protected void doCustomDrops(Zombie leprechaun, List<ItemStack> drops, boolean special, int lootingLevel) {
         drops.clear();
-        if (Math.random() < 0.4 * adjustedChance(lootingLevel)) {
-            drops.add(new ItemStack(Material.GOLD_NUGGET, Util.random(1, 4)));
+        for (Drop drop : CONFIG.DROPS_REGULAR) {
+            if (Math.random() < drop.getDropChance() * adjustedChance(lootingLevel)) {
+                drops.add(drop.generate());
+            }
         }
 
         if (special) {
-            if (Math.random() < leprechaun.getEquipment().getItemInHandDropChance() * adjustedChance(lootingLevel)) {
-                drops.add(leprechaun.getEquipment().getItemInHand());
+            for (Drop drop : CONFIG.DROPS_SPECIAL) {
+                if (Math.random() < drop.getDropChance() * adjustedChance(lootingLevel)) {
+                    drops.add(drop.generate());
+                }
             }
 
-            if (Math.random() < 0.1 * adjustedChance(lootingLevel)) {
-                drops.add(new ItemStack(Material.GOLD_INGOT, Util.random(1, 2)));
-            }
-
-            if (Math.random() < 0.05 * adjustedChance(lootingLevel)) {
-                ItemStack potion = new ItemStack(Material.POTION, 1);
-                PotionMeta meta = (PotionMeta) potion.getItemMeta();
-                meta.setDisplayName(ChatColor.GOLD + "whiskey");
-                meta.addCustomEffect(new PotionEffect(PotionEffectType.HEAL, 1, 0), true);
-                meta.addCustomEffect(new PotionEffect(PotionEffectType.BLINDNESS, 600, 1), true);
-                meta.addCustomEffect(new PotionEffect(PotionEffectType.CONFUSION, 1200, 1), true);
-                meta.setMainEffect(PotionEffectType.HEAL);
-                potion.setItemMeta(meta);
-                drops.add(potion);
-            }
-
-            if (Math.random() < 0.05 * adjustedChance(lootingLevel)) {
-                ItemStack potion = new ItemStack(Material.POTION, 1);
-                PotionMeta meta = (PotionMeta) potion.getItemMeta();
-                meta.setDisplayName(ChatColor.WHITE + "Guinness");
-                meta.addCustomEffect(new PotionEffect(PotionEffectType.CONFUSION, 1200, 1), true);
-                potion.setItemMeta(meta);
-                drops.add(potion);
+            if (Math.random() < leprechaun.getEquipment().getItemInMainHandDropChance() * adjustedChance(lootingLevel)) {
+                drops.add(leprechaun.getEquipment().getItemInMainHand());
             }
 
             // Spawn a pot of gold?
             if (Math.random() < CONFIG.POTS_CHANCE) {
                 PotOfGold pot = _potManager.spawnPotOfGold(leprechaun.getLocation());
                 if (pot != null) {
-                    getLogger().info(
-                        "Spawned pot of gold at " + Util.formatLocation(pot.getLocation()) +
-                        " alive for " + pot.getLifeInTicks() + " ticks.");
+                    getLogger().info("Spawned pot of gold at " + Util.formatLocation(pot.getLocation()) +
+                                     " alive for " + pot.getLifeInTicks() + " ticks.");
                     ItemStack map = new ItemStack(Material.PAPER, 1);
                     ItemMeta meta = map.getItemMeta();
-                    meta.setDisplayName(ChatColor.GOLD + "Treasure Map");
+                    meta.setDisplayName(CONFIG.POTS_MAP_NAME);
                     String formattedLoc = pot.getLocation().getBlockX() + ", " +
                                           pot.getLocation().getBlockY() + ", " +
                                           pot.getLocation().getBlockZ();
-                    meta.setLore(Lists.newArrayList(
-                        "Aye, ye got me!",
-                        "Me treasure is at " + formattedLoc + ".",
-                        "But ye better shake a leg!",
-                        "Nothing lasts forever."));
+                    meta.setLore(Arrays.asList(MessageFormat.format(CONFIG.POTS_MAP_LORE, formattedLoc).split("\\|")));
                     map.setItemMeta(meta);
                     drops.add(map);
                 }
@@ -456,14 +411,14 @@ public class Leprechauns extends JavaPlugin implements Listener {
      * Return multiplicative factor to apply to the base drop chance according
      * to a given looting level.
      *
-     * The drop chance increases by 20% of the base level per looting level.
+     * The drop chance compounds by 20% per looting level.
      *
      * @param lootingLevel the looting level of the weapon.
      * @return a factor to be multiplied by the base drop chance to compute the
      *         actual drop chance.
      */
     protected double adjustedChance(int lootingLevel) {
-        return 1.0 + 0.2 * lootingLevel;
+        return Math.pow(1.2, lootingLevel);
     }
 
     // ------------------------------------------------------------------------
@@ -480,6 +435,11 @@ public class Leprechauns extends JavaPlugin implements Listener {
                type == EntityType.SPIDER ||
                type == EntityType.SKELETON ||
                type == EntityType.ZOMBIE ||
+               // TODO: config option of whether zombie villagers spawn (and not
+               // replaced).
+               type == EntityType.ZOMBIE_VILLAGER ||
+               type == EntityType.HUSK ||
+               type == EntityType.STRAY ||
                type == EntityType.ENDERMAN ||
                type == EntityType.WITCH;
     }
@@ -539,6 +499,11 @@ public class Leprechauns extends JavaPlugin implements Listener {
      * its death must be less than this for it to drop special stuff.
      */
     protected static final int PLAYER_DAMAGE_TICKS = 100;
+
+    /**
+     * Villager professions, statically computed.
+     */
+    protected static final Profession[] VILLAGER_PROFESSIONS = Profession.values();
 
     /**
      * Manages pots of gold.

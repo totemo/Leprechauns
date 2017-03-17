@@ -1,5 +1,6 @@
 package io.totemo.leprechauns;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -60,8 +61,32 @@ public class Util {
 
     // ------------------------------------------------------------------------
     /**
+     * Return a random integer in the range [0,values-1].
+     *
+     * @param values the number of possible values.
+     * @return a random integer in the range [0,values-1].
+     */
+    public static int randomInt(int values) {
+        return _random.nextInt(values);
+    }
+
+    // ------------------------------------------------------------------------
+    /**
+     * Return a random selection from the specified list of options.
+     *
+     * @param options a list of possible options to return; must be non-empty.
+     * @return a random selection from the list.
+     */
+    public static <T> T randomChoice(ArrayList<T> options) {
+        return options.get(_random.nextInt(options.size()));
+    }
+
+    // ------------------------------------------------------------------------
+    /**
      * Return a random integer in the range [min,max].
      *
+     * @param min the minimum possible value.
+     * @param max the maximum possible value.
      * @return a random integer in the range [min,max].
      */
     public static int random(int min, int max) {
@@ -72,6 +97,8 @@ public class Util {
     /**
      * Return a random double in the range [min,max].
      *
+     * @param min the minimum possible value.
+     * @param max the maximum possible value.
      * @return a random double in the range [min,max].
      */
     public static double random(double min, double max) {
