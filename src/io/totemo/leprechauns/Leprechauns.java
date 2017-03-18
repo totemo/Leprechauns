@@ -7,9 +7,9 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -33,7 +33,6 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
-import org.bukkit.material.MaterialData;
 import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -171,9 +170,11 @@ public class Leprechauns extends JavaPlugin implements Listener {
         Entity entity = event.getEntity();
         if (entity instanceof LivingEntity && !(entity instanceof ArmorStand)) {
             Location loc = entity.getLocation();
-            loc.getWorld().spawnParticle(Particle.BLOCK_DUST, loc, 20, 0.5f, 0.5f, 0.5f, new MaterialData(Material.NETHER_WART_BLOCK));
-            // loc.getWorld().spigot().playEffect(loc, Effect.TILE_DUST, 214, 0,
-            // 0.5f, 0.5f, 0.5f, 0, 20, 32);
+            // spawnParticle() launches particles at ludicrous speed. There is
+            // apparently no way to control that?
+            // loc.getWorld().spawnParticle(Particle.BLOCK_DUST, loc, 20, 0.5f,
+            // 0.5f, 0.5f, new MaterialData(Material.NETHER_WART_BLOCK));
+            loc.getWorld().spigot().playEffect(loc, Effect.TILE_DUST, 214, 0, 0.5f, 0.5f, 0.5f, 0, 20, 64);
         }
 
         if (isLeprechaun(entity)) {
