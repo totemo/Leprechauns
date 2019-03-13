@@ -3,12 +3,15 @@ package io.totemo.leprechauns;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.event.entity.EntityEvent;
+import org.bukkit.plugin.Plugin;
 
 // ----------------------------------------------------------------------------
 /**
@@ -39,6 +42,18 @@ public class Configuration {
      * World border radius in the affected world (square world assumed).
      */
     public int WORLD_BORDER;
+
+    /**
+     * If true, leprechauns can despawn when the player is far away, even though
+     * they have a custom name.
+     */
+    public boolean LEPRECHAUN_CAN_DESPAWN;
+
+    /**
+     * Chance, [0.0,1.0] that a mob in the affected world will be replaced by a
+     * leprechaun.
+     */
+    public double LEPRECHAUN_CHANCE;
 
     /**
      * Leprechaun health.
@@ -146,45 +161,59 @@ public class Configuration {
      * Load the plugin configuration.
      */
     public void reload() {
-        Leprechauns.PLUGIN.reloadConfig();
+        Plugin plugin = Leprechauns.PLUGIN;
+        try {
+            plugin.reloadConfig();
+        } catch (Exception ex) {
+            plugin.getLogger().info("Exception loading configuration: " + ex.getMessage());
+            Throwable cause = ex.getCause();
+            if (cause != null) {
+                plugin.getLogger().info("Because: " + cause.getClass().getSimpleName() + " " + cause.getMessage());
+            }
+        }
 
-        DEBUG_CONFIG = Leprechauns.PLUGIN.getConfig().getBoolean("debug.config");
-        DEBUG_DEATH = Leprechauns.PLUGIN.getConfig().getBoolean("debug.death");
-        DEBUG_SPAWN_NATURAL = Leprechauns.PLUGIN.getConfig().getBoolean("debug.spawn.natural");
+        // Note: this configuration instance replaced by reloadConfig().
+        FileConfiguration config = plugin.getConfig();
 
-        WORLD = Bukkit.getWorld(Leprechauns.PLUGIN.getConfig().getString("world.name"));
+        DEBUG_CONFIG = config.getBoolean("debug.config");
+        DEBUG_DEATH = config.getBoolean("debug.death");
+        DEBUG_SPAWN_NATURAL = config.getBoolean("debug.spawn.natural");
+
+        WORLD = Bukkit.getWorld(config.getString("world.name"));
         if (WORLD == null) {
             WORLD = Bukkit.getWorld("world");
         }
         if (WORLD == null) {
             WORLD = Bukkit.getWorlds().get(0);
         }
-        WORLD_BORDER = Leprechauns.PLUGIN.getConfig().getInt("world.border");
+        WORLD_BORDER = config.getInt("world.border");
 
-        LEPRECHAUN_HEALTH = Leprechauns.PLUGIN.getConfig().getInt("leprechaun.health");
-        LEPRECHAUN_BABY_CHANCE = Leprechauns.PLUGIN.getConfig().getDouble("leprechaun.baby_chance");
-        LEPRECHAUN_VILLAGER_CHANCE = Leprechauns.PLUGIN.getConfig().getDouble("leprechaun.villager_chance");
-        LEPRECHAUN_WEAPON_DROP_CHANCE = Leprechauns.PLUGIN.getConfig().getDouble("leprechaun.weapon_drop_chance");
-        LEPRECHAUN_ARMOUR_WORN = Leprechauns.PLUGIN.getConfig().getBoolean("leprechaun.armour.worn");
-        LEPRECHAUN_ARMOUR_DROP_CHANCE = (float) Leprechauns.PLUGIN.getConfig().getDouble("leprechaun.armour.drop_chance");
+        LEPRECHAUN_CAN_DESPAWN = config.getBoolean("leprechaun.can_despawn");
+        LEPRECHAUN_CHANCE = config.getDouble("leprechaun.chance");
+        LEPRECHAUN_HEALTH = config.getInt("leprechaun.health");
+        LEPRECHAUN_BABY_CHANCE = config.getDouble("leprechaun.baby_chance");
+        LEPRECHAUN_VILLAGER_CHANCE = config.getDouble("leprechaun.villager_chance");
+        LEPRECHAUN_WEAPON_DROP_CHANCE = config.getDouble("leprechaun.weapon_drop_chance");
+        LEPRECHAUN_ARMOUR_WORN = config.getBoolean("leprechaun.armour.worn");
+        LEPRECHAUN_ARMOUR_DROP_CHANCE = (float) config.getDouble("leprechaun.armour.drop_chance");
 
-        POTS_CHANCE = Leprechauns.PLUGIN.getConfig().getDouble("pots.chance");
-        POTS_MAX = Leprechauns.PLUGIN.getConfig().getInt("pots.max");
-        POTS_RANGE_MIN = Leprechauns.PLUGIN.getConfig().getInt("pots.range.min");
-        POTS_RANGE_MAX = Leprechauns.PLUGIN.getConfig().getInt("pots.range.max");
-        POTS_EXTRA_TICKS = Leprechauns.PLUGIN.getConfig().getInt("pots.extra_ticks");
-        POTS_MIN_PLAYER_SPEED = Leprechauns.PLUGIN.getConfig().getDouble("pots.min_player_speed");
-        POTS_MAP_NAME = ChatColor.translateAlternateColorCodes('&', Leprechauns.PLUGIN.getConfig().getString("pots.map.name"));
-        POTS_MAP_LORE = ChatColor.translateAlternateColorCodes('&', Leprechauns.PLUGIN.getConfig().getString("pots.map.lore"));
-        POTS_PARTICLE_RADIUS = (float) Leprechauns.PLUGIN.getConfig().getDouble("pots.particle.radius");
-        POTS_PARTICLE_COUNT = Leprechauns.PLUGIN.getConfig().getInt("pots.particle.count");
+        POTS_CHANCE = config.getDouble("pots.chance");
+        POTS_MAX = config.getInt("pots.max");
+        POTS_RANGE_MIN = config.getInt("pots.range.min");
+        POTS_RANGE_MAX = config.getInt("pots.range.max");
+        POTS_EXTRA_TICKS = config.getInt("pots.extra_ticks");
+        POTS_MIN_PLAYER_SPEED = config.getDouble("pots.min_player_speed");
+        POTS_MAP_NAME = ChatColor.translateAlternateColorCodes('&', config.getString("pots.map.name"));
+        POTS_MAP_LORE = ChatColor.translateAlternateColorCodes('&', config.getString("pots.map.lore"));
+        POTS_PARTICLE_RADIUS = (float) config.getDouble("pots.particle.radius");
+        POTS_PARTICLE_COUNT = config.getInt("pots.particle.count");
 
-        DROPS_REGULAR = loadDrops(Leprechauns.PLUGIN.getConfig().getConfigurationSection("drops.regular"));
-        DROPS_SPECIAL = loadDrops(Leprechauns.PLUGIN.getConfig().getConfigurationSection("drops.special"));
-        DROPS_POTS = loadDrops(Leprechauns.PLUGIN.getConfig().getConfigurationSection("drops.pots"));
+        DROPS_REGULAR = loadDrops(config.getConfigurationSection("drops.regular"));
+        DROPS_SPECIAL = loadDrops(config.getConfigurationSection("drops.special"));
+        DROPS_POTS = loadDrops(config.getConfigurationSection("drops.pots"));
 
         if (DEBUG_CONFIG) {
-            Logger logger = Leprechauns.PLUGIN.getLogger();
+            Logger logger = plugin.getLogger();
             logger.info("Configuration:");
             logger.info("DEBUG_DEATH: " + DEBUG_DEATH);
             logger.info("DEBUG_NATURAL_SPAWN: " + DEBUG_SPAWN_NATURAL);
@@ -192,6 +221,8 @@ public class Configuration {
             logger.info("WORLD: " + WORLD.getName());
             logger.info("WORLD_BORDER: " + WORLD_BORDER);
 
+            logger.info("LEPRECHAUN_CAN_DESPAWN: " + LEPRECHAUN_CAN_DESPAWN);
+            logger.info("LEPRECHAUN_CHANCE: " + LEPRECHAUN_CHANCE);
             logger.info("LEPRECHAUN_HEALTH: " + LEPRECHAUN_HEALTH);
             logger.info("LEPRECHAUN_BABY_CHANCE: " + LEPRECHAUN_BABY_CHANCE);
             logger.info("LEPRECHAUN_VILLAGER_CHANCE: " + LEPRECHAUN_VILLAGER_CHANCE);
@@ -224,7 +255,14 @@ public class Configuration {
             for (Drop drop : DROPS_POTS) {
                 logger.info(drop.toString());
             }
+
+            List<String> firstNames = (List<String>) config.getList("messages.names.first");
+            List<String> lastNames = (List<String>) config.getList("messages.names.surname");
+
+            logger.info("First names: " + firstNames.stream().collect(Collectors.joining(" ")));
+            logger.info("Last names: " + lastNames.stream().collect(Collectors.joining(" ")));
         }
+
     } // reload
 
     // ------------------------------------------------------------------------

@@ -7,9 +7,9 @@ import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
-import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -119,7 +119,10 @@ public class Leprechauns extends JavaPlugin implements Listener {
             return;
         }
 
-        if (event.getSpawnReason() == SpawnReason.NATURAL && isEligibleHostileMob(event.getEntityType())) {
+        if (event.getSpawnReason() == SpawnReason.NATURAL &&
+            isEligibleHostileMob(event.getEntityType()) &&
+            Math.random() < CONFIG.LEPRECHAUN_CHANCE) {
+
             Entity originalMob = event.getEntity();
             Location loc = originalMob.getLocation();
             originalMob.remove();
@@ -167,23 +170,20 @@ public class Leprechauns extends JavaPlugin implements Listener {
             return;
         }
 
-        Entity entity = event.getEntity();
-        if (entity instanceof LivingEntity && !(entity instanceof ArmorStand)) {
-            Location loc = entity.getLocation();
-            // spawnParticle() launches particles at ludicrous speed. There is
-            // apparently no way to control that?
-            // loc.getWorld().spawnParticle(Particle.BLOCK_DUST, loc, 20, 0.5f,
-            // 0.5f, 0.5f, new MaterialData(Material.NETHER_WART_BLOCK));
-            loc.getWorld().spigot().playEffect(loc, Effect.TILE_DUST, 214, 0, 0.5f, 0.5f, 0.5f, 0, 20, 64);
+        Entity victim = event.getEntity();
+        if (victim instanceof LivingEntity && !(victim instanceof ArmorStand)) {
+            Location loc = victim.getLocation();
+            // Blood particles.
+            loc.getWorld().spawnParticle(Particle.BLOCK_DUST, loc, 20, 0.5f, 0.5f, 0.5f, Material.NETHER_WART_BLOCK.createBlockData());
         }
 
-        if (isLeprechaun(entity)) {
-            int lootingLevel = 0;
+        if (isLeprechaun(victim)) {
             boolean isPlayerAttack = false;
+            String playerName = "";
             if (event.getDamager() instanceof Player) {
                 isPlayerAttack = true;
                 Player player = (Player) event.getDamager();
-                lootingLevel = player.getEquipment().getItemInMainHand().getEnchantmentLevel(Enchantment.LOOT_BONUS_MOBS);
+                playerName = player.getName();
             } else if (event.getDamager() instanceof Projectile) {
                 Projectile projectile = (Projectile) event.getDamager();
                 if (projectile.getShooter() instanceof Player) {
@@ -193,8 +193,8 @@ public class Leprechauns extends JavaPlugin implements Listener {
 
             // Tag mobs hurt by players with the damage time stamp.
             if (isPlayerAttack) {
-                entity.setMetadata(PLAYER_DAMAGE_TIME_KEY, new FixedMetadataValue(this, new Long(entity.getWorld().getFullTime())));
-                entity.setMetadata(PLAYER_LOOTING_LEVEL_KEY, new FixedMetadataValue(this, lootingLevel));
+                victim.setMetadata(PLAYER_NAME_KEY, new FixedMetadataValue(this, playerName));
+                victim.setMetadata(PLAYER_DAMAGE_TIME_KEY, new FixedMetadataValue(this, new Long(victim.getWorld().getFullTime())));
             }
         }
     } // onEntityDamageByEntity
@@ -215,7 +215,6 @@ public class Leprechauns extends JavaPlugin implements Listener {
                 getLogger().info("Mob died at " + Util.formatLocation(entity.getLocation()));
             }
 
-            int lootingLevel = getLootingLevelMeta(entity);
             boolean specialDrops = false;
             Long damageTime = getPlayerDamageTime(entity);
             if (damageTime != null) {
@@ -225,6 +224,14 @@ public class Leprechauns extends JavaPlugin implements Listener {
                 }
             }
 
+            // Calculate looting based on what the killing player is
+            // holding in his hands at the time the entity dies.
+            Player player = Bukkit.getPlayerExact(getPlayerNameMeta(entity));
+            if (player == null) {
+                return;
+            }
+            int lootingLevel = Math.max(player.getEquipment().getItemInMainHand().getEnchantmentLevel(Enchantment.LOOT_BONUS_MOBS),
+                                        player.getEquipment().getItemInOffHand().getEnchantmentLevel(Enchantment.LOOT_BONUS_MOBS));
             doCustomDrops((Zombie) entity, event.getDrops(), specialDrops, lootingLevel);
         }
     } // onEntityDeath
@@ -256,6 +263,7 @@ public class Leprechauns extends JavaPlugin implements Listener {
 
         leprechaun.setCustomNameVisible(true);
         leprechaun.setCustomName(CONFIG.randomLeprechaunName());
+        leprechaun.setRemoveWhenFarAway(CONFIG.LEPRECHAUN_CAN_DESPAWN);
         leprechaun.setMetadata(LEPRECHAUN_KEY, LEPRECHAUN_META);
         leprechaun.getEquipment().setItemInMainHand(makeCustomWeapon());
         leprechaun.getEquipment().setItemInMainHandDropChance((float) CONFIG.LEPRECHAUN_WEAPON_DROP_CHANCE);
@@ -286,7 +294,7 @@ public class Leprechauns extends JavaPlugin implements Listener {
     protected ItemStack makeCustomWeapon() {
         ItemStack weapon;
         if (Math.random() < 0.2) {
-            weapon = new ItemStack(Material.LONG_GRASS, 1, (short) 1);
+            weapon = new ItemStack(Material.GRASS, 1);
             ItemMeta meta = weapon.getItemMeta();
             meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&2a shamrock"));
             weapon.setItemMeta(meta);
@@ -321,6 +329,22 @@ public class Leprechauns extends JavaPlugin implements Listener {
 
     // ------------------------------------------------------------------------
     /**
+     * Return the name of the player who killed a mob from metadata on the mob.
+     *
+     * This metadata is added when a player damages a mob. It is the level of
+     * the Looting enchant on the weapon that did the damage, or 0 if there was
+     * no such enchant.
+     *
+     * @param entity the damaged entity.
+     * @return the name of the player who killed a mob from metadata on the mob.
+     */
+    protected String getPlayerNameMeta(Entity entity) {
+        List<MetadataValue> name = entity.getMetadata(PLAYER_NAME_KEY);
+        return (name.size() > 0) ? name.get(0).asString() : "";
+    }
+
+    // ------------------------------------------------------------------------
+    /**
      * Return the world time when a player damaged the specified entity, if
      * stored as a PLAYER_DAMAGE_TIME_KEY metadata value, or null if that didn't
      * happen.
@@ -341,25 +365,6 @@ public class Leprechauns extends JavaPlugin implements Listener {
 
     // ------------------------------------------------------------------------
     /**
-     * Return the looting level metadata value from a leprechaun.
-     *
-     * This metadata is added when a player damages a leprechaun. It is the
-     * level of the Looting enchant on the weapon that did the damage, or 0 if
-     * there was no such enchant.
-     *
-     * @param entity the damaged entity.
-     * @return the level of the Looting enchant, or 0 if not so enchanted.
-     */
-    protected int getLootingLevelMeta(Entity entity) {
-        List<MetadataValue> lootingLevel = entity.getMetadata(PLAYER_LOOTING_LEVEL_KEY);
-        if (lootingLevel.size() > 0) {
-            return lootingLevel.get(0).asInt();
-        }
-        return 0;
-    }
-
-    // ------------------------------------------------------------------------
-    /**
      * Clear the default drops and add in custom ones.
      *
      * @param leprechaun the dropping mob.
@@ -371,14 +376,14 @@ public class Leprechauns extends JavaPlugin implements Listener {
     protected void doCustomDrops(Zombie leprechaun, List<ItemStack> drops, boolean special, int lootingLevel) {
         drops.clear();
         for (Drop drop : CONFIG.DROPS_REGULAR) {
-            if (Math.random() < drop.getDropChance() * adjustedChance(lootingLevel)) {
+            if (drop.isValid() && Math.random() < drop.getDropChance() * adjustedChance(lootingLevel)) {
                 drops.add(drop.generate());
             }
         }
 
         if (special) {
             for (Drop drop : CONFIG.DROPS_SPECIAL) {
-                if (Math.random() < drop.getDropChance() * adjustedChance(lootingLevel)) {
+                if (drop.isValid() && Math.random() < drop.getDropChance() * adjustedChance(lootingLevel)) {
                     drops.add(drop.generate());
                 }
             }
@@ -395,10 +400,10 @@ public class Leprechauns extends JavaPlugin implements Listener {
                                      " alive for " + pot.getLifeInTicks() + " ticks.");
                     ItemStack map = new ItemStack(Material.PAPER, 1);
                     ItemMeta meta = map.getItemMeta();
-                    meta.setDisplayName(CONFIG.POTS_MAP_NAME);
                     String formattedLoc = pot.getLocation().getBlockX() + ", " +
                                           pot.getLocation().getBlockY() + ", " +
                                           pot.getLocation().getBlockZ();
+                    meta.setDisplayName(MessageFormat.format(CONFIG.POTS_MAP_NAME, formattedLoc));
                     meta.setLore(Arrays.asList(MessageFormat.format(CONFIG.POTS_MAP_LORE, formattedLoc).split("\\|")));
                     map.setItemMeta(meta);
                     drops.add(map);
@@ -489,10 +494,13 @@ public class Leprechauns extends JavaPlugin implements Listener {
     protected static final String PLAYER_DAMAGE_TIME_KEY = "Leprechauns_PlayerDamageTime";
 
     /**
-     * Metadata name used for metadata stored on mobs to record looting
-     * enchantment level of Looting weapon used by a player.
+     * Metadata name used for metadata stored on mobs to record the name of the
+     * player who most recently damaged a mob.
+     *
+     * This is used to look up the damaging player and compute the looting level
+     * at the time of mob death.
      */
-    protected static final String PLAYER_LOOTING_LEVEL_KEY = "Leprechauns_PlayerLootingLevel";
+    protected static final String PLAYER_NAME_KEY = "Leprechauns_PlayerName";
 
     /**
      * Time in ticks (1/20ths of a second) for which player attack damage

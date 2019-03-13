@@ -1,11 +1,12 @@
 package io.totemo.leprechauns;
 
 import org.bukkit.Color;
-import org.bukkit.Effect;
 import org.bukkit.FireworkEffect;
 import org.bukkit.FireworkEffect.Type;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
+import org.bukkit.Particle.DustOptions;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -80,12 +81,15 @@ public class PotOfGold {
             return false;
         }
 
-        World.Spigot spigot = _location.getWorld().spigot();
-        spigot.playEffect(_location, Effect.COLOURED_DUST, 0, 0,
-                          Leprechauns.CONFIG.POTS_PARTICLE_RADIUS,
-                          Leprechauns.CONFIG.POTS_PARTICLE_RADIUS,
-                          Leprechauns.CONFIG.POTS_PARTICLE_RADIUS,
-                          1.0f, Leprechauns.CONFIG.POTS_PARTICLE_COUNT, 64);
+        Location particleCentre = _location.clone();
+        particleCentre.add(0.5, 0.5, 0.5);
+        _location.getWorld().spawnParticle(Particle.REDSTONE,
+                                           particleCentre,
+                                           Leprechauns.CONFIG.POTS_PARTICLE_COUNT,
+                                           Leprechauns.CONFIG.POTS_PARTICLE_RADIUS,
+                                           Leprechauns.CONFIG.POTS_PARTICLE_RADIUS,
+                                           Leprechauns.CONFIG.POTS_PARTICLE_RADIUS,
+                                           POT_DUST_OPTIONS);
         for (Entity entity : _location.getWorld().getNearbyEntities(_location, 5, 5, 5)) {
             if (entity instanceof Player) {
                 spawnLoot((Player) entity);
@@ -108,7 +112,7 @@ public class PotOfGold {
         World world = _location.getWorld();
         world.playSound(getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 3, 1);
         for (Drop drop : Leprechauns.CONFIG.DROPS_POTS) {
-            if (Math.random() < drop.getDropChance()) {
+            if (drop.isValid() && Math.random() < drop.getDropChance()) {
                 world.dropItemNaturally(_location, drop.generate());
             }
         }
@@ -165,6 +169,11 @@ public class PotOfGold {
     protected static final FireworkEffect.Type[] FIREWORK_TYPES = { Type.BALL, Type.BALL_LARGE, Type.STAR, Type.BURST };
 
     /**
+     * Restone dust particle options for pots of gold.
+     */
+    protected static final DustOptions POT_DUST_OPTIONS = new DustOptions(Color.fromRGB(0xffd700), 1.0f);
+
+    /**
      * Location of the pot of gold.
      */
     protected Location _location;
@@ -173,4 +182,5 @@ public class PotOfGold {
      * The number of ticks this pot of gold should live.
      */
     protected int _lifeTicks;
+
 } // class PotOfGold

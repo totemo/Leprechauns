@@ -6,9 +6,11 @@ debug:
 
 world:
   name: world
-  border: 2990
+  border: 3490
 
 leprechaun:
+  can_despawn: true
+  chance: 1.0
   health: 25
   baby_chance: 0.2
   villager_chance: 0.3
@@ -37,11 +39,11 @@ pots:
   min_player_speed: 3.0
 
   map:
-    name: '&6Treasure Map'
+    name: '&6Treasure at {0}'
     lore: 'Aye, ye got me!|Me treasure is at {0}.|But ye better shake a leg!|Nothing lasts forever.'
 
   particle:
-    radius: 2.0
+    radius: 1.25
     count: 25
 
 
@@ -80,38 +82,38 @@ drops:
       chance: 0.01
       item:
         ==: org.bukkit.inventory.ItemStack
+        v: 1631
         type: POTION
         meta:
           ==: ItemMeta
           meta-type: POTION
+          potion-type: minecraft:luck
           display-name: §6Whiskey
           custom-effects:
-          - ==: PotionEffect
-            effect: 26
-            duration: 1200
-            amplifier: 1
-            ambient: true
-            has-particles: true
           - ==: PotionEffect
             effect: 15
             duration: 600
             amplifier: 1
             ambient: true
             has-particles: true
+            has-icon: true
           - ==: PotionEffect
             effect: 9
             duration: 1200
             amplifier: 1
             ambient: true
             has-particles: true
+            has-icon: true
     guinness:
       chance: 0.01
       item:
         ==: org.bukkit.inventory.ItemStack
+        v: 1631
         type: POTION
         meta:
           ==: ItemMeta
           meta-type: POTION
+          potion-type: minecraft:luck
           display-name: §fGuinness
           custom-effects:
           - ==: PotionEffect
@@ -132,37 +134,44 @@ drops:
       chance: 0.1
       item:
         ==: org.bukkit.inventory.ItemStack
-        type: GOLD_HELMET
+        v: 1631
+        type: GOLDEN_HELMET
     gold_chestplate:
       chance: 0.1
       item:
         ==: org.bukkit.inventory.ItemStack
-        type: GOLD_CHESTPLATE
+        v: 1631
+        type: GOLDEN_CHESTPLATE
     gold_leggings:
       chance: 0.1
       item:
         ==: org.bukkit.inventory.ItemStack
-        type: GOLD_LEGGINGS
+        v: 1631
+        type: GOLDEN_LEGGINGS
     gold_boots:
       chance: 0.1
       item:
         ==: org.bukkit.inventory.ItemStack
-        type: GOLD_BOOTS
+        v: 1631
+        type: GOLDEN_BOOTS
     gold_axe:
       chance: 0.1
       item:
         ==: org.bukkit.inventory.ItemStack
-        type: GOLD_AXE
+        v: 1631
+        type: GOLDEN_AXE
     gold_sword:
       chance: 0.1
       item:
         ==: org.bukkit.inventory.ItemStack
-        type: GOLD_SWORD
+        v: 1631
+        type: GOLDEN_SWORD
     watch:
       chance: 0.1
       item:
         ==: org.bukkit.inventory.ItemStack
-        type: WATCH
+        v: 1631
+        type: CLOCK
     gold_nugget:
       chance: 1.0
       min: 3
@@ -186,18 +195,20 @@ drops:
       chance: 0.1
       item:
         ==: org.bukkit.inventory.ItemStack
-        type: GOLD_BARDING
+        v: 1631
+        type: GOLDEN_HORSE_ARMOR
     golden_apple:
       chance: 0.2
       item:
         ==: org.bukkit.inventory.ItemStack
+        v: 1631
         type: GOLDEN_APPLE
     notch_apple:
       chance: 0.1
       item:
         ==: org.bukkit.inventory.ItemStack
-        type: GOLDEN_APPLE
-        damage: 1
+        v: 1631
+        type: ENCHANTED_GOLDEN_APPLE
     golden_carrot:
       chance: 0.4
       min: 1
@@ -205,6 +216,21 @@ drops:
       item:
         ==: org.bukkit.inventory.ItemStack
         type: GOLDEN_CARROT
+    doubloon:
+      chance: 0.333
+      item:
+        ==: org.bukkit.inventory.ItemStack
+        v: 1631
+        type: SUNFLOWER
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          display-name: §eDoubloon §d[SUPER RARE]
+          lore:
+          - §6Ah, gold! A pirate's best friend. Just don't look too closely.
+          - Trade this precious booty at spawn!
+          enchants:
+            ARROW_INFINITE: 1
 
 messages:
   names:

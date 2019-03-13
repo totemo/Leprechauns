@@ -25,6 +25,16 @@ public class Drop {
 
     // ------------------------------------------------------------------------
     /**
+     * Return true if the generated ItemStack is non-null.
+     * 
+     * @return true if the generated ItemStack is non-null.
+     */
+    public boolean isValid() {
+        return _itemStack != null;
+    }
+
+    // ------------------------------------------------------------------------
+    /**
      * Return the probability of this drop, in the range [0.0,1.0].
      */
     public double getDropChance() {
@@ -39,9 +49,13 @@ public class Drop {
      * @return the ItemStack.
      */
     public ItemStack generate() {
-        ItemStack result = _itemStack.clone();
-        result.setAmount(Util.random(_min, _max));
-        return result;
+        if (isValid()) {
+            ItemStack result = _itemStack.clone();
+            result.setAmount(Util.random(_min, _max));
+            return result;
+        } else {
+            return null;
+        }
     }
 
     // ------------------------------------------------------------------------
