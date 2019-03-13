@@ -37,6 +37,8 @@ import org.bukkit.metadata.FixedMetadataValue;
 import org.bukkit.metadata.MetadataValue;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import nu.nerd.entitymeta.EntityMeta;
+
 // ----------------------------------------------------------------------------
 /**
  * Leprechauns plugin, command handling and event handler.
@@ -61,7 +63,6 @@ public class Leprechauns extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
         PLUGIN = this;
-        LEPRECHAUN_META = new FixedMetadataValue(this, "Leprechaun");
 
         saveDefaultConfig();
         CONFIG.reload();
@@ -264,7 +265,7 @@ public class Leprechauns extends JavaPlugin implements Listener {
         leprechaun.setCustomNameVisible(true);
         leprechaun.setCustomName(CONFIG.randomLeprechaunName());
         leprechaun.setRemoveWhenFarAway(CONFIG.LEPRECHAUN_CAN_DESPAWN);
-        leprechaun.setMetadata(LEPRECHAUN_KEY, LEPRECHAUN_META);
+        EntityMeta.api().set(leprechaun, this, IS_LEPRECHAUN, true);
         leprechaun.getEquipment().setItemInMainHand(makeCustomWeapon());
         leprechaun.getEquipment().setItemInMainHandDropChance((float) CONFIG.LEPRECHAUN_WEAPON_DROP_CHANCE);
 
@@ -458,7 +459,8 @@ public class Leprechauns extends JavaPlugin implements Listener {
      * @return true if the specified mob is a leprechaun.
      */
     protected boolean isLeprechaun(Entity mob) {
-        return mob.hasMetadata(LEPRECHAUN_KEY);
+        Boolean isLeprechaun = (Boolean) EntityMeta.api().get(mob, this, IS_LEPRECHAUN);
+        return isLeprechaun != null && isLeprechaun;
     }
 
     // ------------------------------------------------------------------------
@@ -478,14 +480,9 @@ public class Leprechauns extends JavaPlugin implements Listener {
 
     // ------------------------------------------------------------------------
     /**
-     * Metadata name (key) used to tag leprechauns.
+     * Persistent (EntityMeta) metadata name used to tag leprechauns.
      */
-    protected static final String LEPRECHAUN_KEY = "Lephrechauns_Leprechaun";
-
-    /**
-     * Shared metadata value for all disguised entities.
-     */
-    protected static FixedMetadataValue LEPRECHAUN_META;
+    protected static final String IS_LEPRECHAUN = "is-leprechaun";
 
     /**
      * Metadata name used for metadata stored on mobs to record last damage time
