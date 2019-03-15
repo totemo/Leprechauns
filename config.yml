@@ -56,21 +56,46 @@ drops:
       item:
         ==: org.bukkit.inventory.ItemStack
         type: GOLD_NUGGET
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          display-name: §eLeprechaun's Gold
+          lore:
+          - §2St. Patrick's Day 2019
     potato:
       chance: 0.05
       item:
         ==: org.bukkit.inventory.ItemStack
         type: POTATO_ITEM
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          display-name: §6Potato
+          lore:
+          - §2St. Patrick's Day 2019
     baked_potato:
       chance: 0.05
       item:
         ==: org.bukkit.inventory.ItemStack
         type: BAKED_POTATO
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          display-name: §6Baked Potato
+          lore:
+          - §2St. Patrick's Day 2019
     rotten_potato:
-      chance: 0.05
+      chance: 0.03
       item:
         ==: org.bukkit.inventory.ItemStack
         type: POISONOUS_POTATO
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          display-name: §6$pudcoin
+          lore:
+          - §fTrade this ancient currency at spawn!
+          - §2St. Patrick's Day 2019
 
   special:
     gold_ingot:
@@ -78,6 +103,12 @@ drops:
       item:
         ==: org.bukkit.inventory.ItemStack
         type: GOLD_INGOT
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          display-name: §eLeprechaun's Gold Bar
+          lore:
+          - §2St. Patrick's Day 2019
     whiskey:
       chance: 0.01
       item:
@@ -89,6 +120,8 @@ drops:
           meta-type: POTION
           potion-type: minecraft:luck
           display-name: §6Whiskey
+          lore:
+          - §2St. Patrick's Day 2019
           custom-effects:
           - ==: PotionEffect
             effect: 15
@@ -115,6 +148,8 @@ drops:
           meta-type: POTION
           potion-type: minecraft:luck
           display-name: §fGuinness
+          lore:
+          - §2St. Patrick's Day 2019
           custom-effects:
           - ==: PotionEffect
             effect: 6
@@ -128,6 +163,71 @@ drops:
             amplifier: 1
             ambient: true
             has-particles: true
+    ale_head:
+      chance: 0.025
+      item:
+        ==: org.bukkit.inventory.ItemStack
+        v: 1631
+        type: PLAYER_HEAD
+        meta:
+          ==: ItemMeta
+          meta-type: SKULL
+          display-name: §eAle
+          lore:
+          - §2St. Patrick's Day 2019
+          internal: H4sIAAAAAAAAAE2OzW6CQBhFvzZpQkkfo1uSmUGxLLowttEhMlTlfwfDTAVmrFEwwlP1Ecuyy3vPPck1AUx4ObS9Ul+XH1krYcAjreCVS9cR+K2wZGljy66QsFxiI0tiXpJCysUMCxPMSTqLS1eL6zMYnbh3/UVcTQB4MOApLlQv4FcMHsrTI6pST/GBOlMOD0gFtDkv6CkeyhV1qJ74ZulsB/ffdt4VyVxltnfMT7u+1DHa2nslNnvMdXRjH0vsk2hgzTdhxKtZyLE/HlUQ8lkQfo6M7OtM06njNltH92Adt1mY6zzJsJ+w2tdxmze7gWk6spEStvJcmaL36T38AZvYky0YAQAA      
+    hat_head:
+      chance: 0.025
+      item:
+        ==: org.bukkit.inventory.ItemStack
+        v: 1631
+        type: PLAYER_HEAD
+        meta:
+          ==: ItemMeta
+          meta-type: SKULL
+          display-name: §aLeprechaun's Hat
+          lore:
+          - §2St. Patrick's Day 2019
+          internal: H4sIAAAAAAAAAE2Py06DQBhGf01MkPgYbklgoFwWLoiQdkgHtJ1Spjsug9DO1KYFcXwuH1CWLr+ccxafDqDD0/Y0CvF2/Wx7wTW4xw08277vca+sDB7YpuE4i9YIkMWNxvJbt3Xd2kO+DvocXfh16PntEbSBfw/jld90ALjT4CEvxcjhl6vEPBSd2RSJqBV25023psjw8eLhc66qV+xiOfNV6K5V8M9dDOV+IZiddIfz+1jJ3FzbG8FXG6uWu69sGVspYlO6jBGRZGJoI5hkDtnvpox2gkThRGitGM0FoY1MaX4kEXPSKLQzGtrkp+sZjVEqk1NGMcqiD8VUErSF+TI/gD9oIKZLHAEAAA==
+    potato_head:
+      chance: 0.025
+      item:
+        ==: org.bukkit.inventory.ItemStack
+        v: 1631
+        type: PLAYER_HEAD
+        meta:
+          ==: ItemMeta
+          meta-type: SKULL
+          display-name: §ePotato
+          lore:
+          - §2St. Patrick's Day 2019
+          internal: H4sIAAAAAAAAAE2PzW6CQBhFvzZpYkkfo1uSEQRk0YVRxCHOUH9Qmd0AQ2GcsUahAZ+rD1iWXd6ccxbXADDgbXdulfq8fZe1EiN4xgW8c2GVlpdPzIzbnmkjJExeOoUpMt/3px7nbjY1wBiiq7g1tbi/wqgRXdPexN0AgKcRvBy4agX8ij5C7FSh4hSpvMfusPc7pGIsrx6+HPpsjl2sB76aueve/+c6DT86KrWjil02baYPaG1vlVhtx7lOflgY6VSyMw2DMQ1JR62kp4/NhC6InR6ppI+ZE4esTuWyIlbQER0gsig03S9rYiUo3ieISPIgMu/o4gtRzc7xPPLLE/oYHsAfpgWuSBwBAAA=
+    pog_head:
+      chance: 0.025
+      item:
+        ==: org.bukkit.inventory.ItemStack
+        v: 1631
+        type: PLAYER_HEAD
+        meta:
+          ==: ItemMeta
+          meta-type: SKULL
+          display-name: §ePot o' Gold
+          lore:
+          - §2St. Patrick's Day 2019
+          internal: H4sIAAAAAAAAAE2Py06DQBiFf01MkPgYbklmoNwWXRiRdkgHhE5rmV2BQS5DbVrQwnP5gLJ0cRYn3/kWRwVQ4WnbDlK+X77KWgoF7kkBz4Wj22hRYC1HAmmGUWLNdRxLE1ZmYyfH2FnYKqizdBaXvhbXR1B6ceuHi7iqAHCnwMP+KAcBv2IMED9UqDgEMh+JNXe2RTIizdkmp/2YvRKLdDNfv1ib0f23NfvjhylTI6j4KR6ybo82RiLFOsF5t/uOvELSlV9FLJ6ontQpk3U47Uw6BRVlfptOLeJe/BN2QcvZm8nZp06n3S30yJx2TJtQco8a0YouOPOrUA8bcsJuGS+X8wP4A3Z08jAcAQAA
+    bread_head:
+      chance: 0.025
+      item:
+        ==: org.bukkit.inventory.ItemStack
+        v: 1631
+        type: PLAYER_HEAD
+        meta:
+          ==: ItemMeta
+          meta-type: SKULL
+          display-name: §6Irish Soda Bread
+          lore:
+          - §2St. Patrick's Day 2019
+          internal: H4sIAAAAAAAAAE2Oy06DQBhGf01MkPgYbkmmDEPbhYumqB1SBkspl9kBHeQyUxsKRngqH1GWLr+cc5JPB9Dh6dgOUn50X2UthQb39AzPOcY4IyvbyAm2DVwSYuR5URpkYZmrzLbIUlg66HN0FV1fi9sjaL346YdO3HQAuNPgIcrkIOBXjC7iSYXOiSuLkdrzDo9I+rS5LuklGvMttama+W5j78f1P5f0WUxkit2KXw5DriK0x4EUu2BRqNN3agY1j18n36HYCzeYhcXE1Alxh1d+WNVpGDRs+kSpciUzvZE7by1rWswVqz3FFG+qik1Bw98PhMeexbfuukzQy/we/gA0NxLFGAEAAA==
 
   pots:
     gold_helmet:
@@ -136,42 +236,84 @@ drops:
         ==: org.bukkit.inventory.ItemStack
         v: 1631
         type: GOLDEN_HELMET
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          display-name: §eLeprechaun's Helmet
+          lore:
+          - §2St. Patrick's Day 2019
     gold_chestplate:
       chance: 0.1
       item:
         ==: org.bukkit.inventory.ItemStack
         v: 1631
         type: GOLDEN_CHESTPLATE
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          display-name: §eLeprechaun's Vest
+          lore:
+          - §2St. Patrick's Day 2019
     gold_leggings:
       chance: 0.1
       item:
         ==: org.bukkit.inventory.ItemStack
         v: 1631
         type: GOLDEN_LEGGINGS
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          display-name: §eLeprechaun's Leggings
+          lore:
+          - §2St. Patrick's Day 2019
     gold_boots:
       chance: 0.1
       item:
         ==: org.bukkit.inventory.ItemStack
         v: 1631
         type: GOLDEN_BOOTS
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          display-name: §eLeprechaun's Boots
+          lore:
+          - §2St. Patrick's Day 2019
     gold_axe:
       chance: 0.1
       item:
         ==: org.bukkit.inventory.ItemStack
         v: 1631
         type: GOLDEN_AXE
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          display-name: §eLeprechaun's Axe
+          lore:
+          - §2St. Patrick's Day 2019
     gold_sword:
       chance: 0.1
       item:
         ==: org.bukkit.inventory.ItemStack
         v: 1631
         type: GOLDEN_SWORD
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          display-name: §eLeprechaun's Sword
+          lore:
+          - §2St. Patrick's Day 2019
     watch:
       chance: 0.1
       item:
         ==: org.bukkit.inventory.ItemStack
         v: 1631
         type: CLOCK
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          display-name: §eLeprechaun's Clock
+          lore:
+          - §2St. Patrick's Day 2019
     gold_nugget:
       chance: 1.0
       min: 3
@@ -179,6 +321,12 @@ drops:
       item:
         ==: org.bukkit.inventory.ItemStack
         type: GOLD_NUGGET
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          display-name: §eLeprechaun's Gold
+          lore:
+          - §2St. Patrick's Day 2019
     gold_ingot:
       chance: 1.0
       min: 2
@@ -186,29 +334,59 @@ drops:
       item:
         ==: org.bukkit.inventory.ItemStack
         type: GOLD_INGOT
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          display-name: §eLeprechaun's Gold Bar
+          lore:
+          - §2St. Patrick's Day 2019
     gold_block:
       chance: 0.1
       item:
         ==: org.bukkit.inventory.ItemStack
         type: GOLD_BLOCK
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          display-name: §eLeprechaun's Gold Block
+          lore:
+          - §2St. Patrick's Day 2019
     gold_barding:
       chance: 0.1
       item:
         ==: org.bukkit.inventory.ItemStack
         v: 1631
         type: GOLDEN_HORSE_ARMOR
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          display-name: §eLeprechaun's Horse Armor
+          lore:
+          - §2St. Patrick's Day 2019
     golden_apple:
       chance: 0.2
       item:
         ==: org.bukkit.inventory.ItemStack
         v: 1631
         type: GOLDEN_APPLE
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          display-name: §eLeprechaun's Apple
+          lore:
+          - §2St. Patrick's Day 2019
     notch_apple:
       chance: 0.1
       item:
         ==: org.bukkit.inventory.ItemStack
         v: 1631
         type: ENCHANTED_GOLDEN_APPLE
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          display-name: §eEnchanted Leprechaun's Apple
+          lore:
+          - §2St. Patrick's Day 2019
     golden_carrot:
       chance: 0.4
       min: 1
@@ -216,6 +394,12 @@ drops:
       item:
         ==: org.bukkit.inventory.ItemStack
         type: GOLDEN_CARROT
+        meta:
+          ==: ItemMeta
+          meta-type: UNSPECIFIC
+          display-name: §eLeprechaun's Carrot
+          lore:
+          - §2St. Patrick's Day 2019
     doubloon:
       chance: 0.333
       item:
