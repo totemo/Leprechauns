@@ -164,7 +164,7 @@ drops:
             ambient: true
             has-particles: true
     ale_head:
-      chance: 0.025
+      chance: 0.005
       item:
         ==: org.bukkit.inventory.ItemStack
         v: 1631
@@ -177,7 +177,7 @@ drops:
           - §2St. Patrick's Day 2019
           internal: H4sIAAAAAAAAAE2OzW6CQBhFvzZpQkkfo1uSmUGxLLowttEhMlTlfwfDTAVmrFEwwlP1Ecuyy3vPPck1AUx4ObS9Ul+XH1krYcAjreCVS9cR+K2wZGljy66QsFxiI0tiXpJCysUMCxPMSTqLS1eL6zMYnbh3/UVcTQB4MOApLlQv4FcMHsrTI6pST/GBOlMOD0gFtDkv6CkeyhV1qJ74ZulsB/ffdt4VyVxltnfMT7u+1DHa2nslNnvMdXRjH0vsk2hgzTdhxKtZyLE/HlUQ8lkQfo6M7OtM06njNltH92Adt1mY6zzJsJ+w2tdxmze7gWk6spEStvJcmaL36T38AZvYky0YAQAA      
     hat_head:
-      chance: 0.025
+      chance: 0.005
       item:
         ==: org.bukkit.inventory.ItemStack
         v: 1631
@@ -190,7 +190,7 @@ drops:
           - §2St. Patrick's Day 2019
           internal: H4sIAAAAAAAAAE2Py06DQBhGf01MkPgYbklgoFwWLoiQdkgHtJ1Spjsug9DO1KYFcXwuH1CWLr+ccxafDqDD0/Y0CvF2/Wx7wTW4xw08277vca+sDB7YpuE4i9YIkMWNxvJbt3Xd2kO+DvocXfh16PntEbSBfw/jld90ALjT4CEvxcjhl6vEPBSd2RSJqBV25023psjw8eLhc66qV+xiOfNV6K5V8M9dDOV+IZiddIfz+1jJ3FzbG8FXG6uWu69sGVspYlO6jBGRZGJoI5hkDtnvpox2gkThRGitGM0FoY1MaX4kEXPSKLQzGtrkp+sZjVEqk1NGMcqiD8VUErSF+TI/gD9oIKZLHAEAAA==
     potato_head:
-      chance: 0.025
+      chance: 0.005
       item:
         ==: org.bukkit.inventory.ItemStack
         v: 1631
@@ -203,7 +203,7 @@ drops:
           - §2St. Patrick's Day 2019
           internal: H4sIAAAAAAAAAE2PzW6CQBhFvzZpYkkfo1uSEQRk0YVRxCHOUH9Qmd0AQ2GcsUahAZ+rD1iWXd6ccxbXADDgbXdulfq8fZe1EiN4xgW8c2GVlpdPzIzbnmkjJExeOoUpMt/3px7nbjY1wBiiq7g1tbi/wqgRXdPexN0AgKcRvBy4agX8ij5C7FSh4hSpvMfusPc7pGIsrx6+HPpsjl2sB76aueve/+c6DT86KrWjil02baYPaG1vlVhtx7lOflgY6VSyMw2DMQ1JR62kp4/NhC6InR6ppI+ZE4esTuWyIlbQER0gsig03S9rYiUo3ieISPIgMu/o4gtRzc7xPPLLE/oYHsAfpgWuSBwBAAA=
     pog_head:
-      chance: 0.025
+      chance: 0.005
       item:
         ==: org.bukkit.inventory.ItemStack
         v: 1631
@@ -216,7 +216,7 @@ drops:
           - §2St. Patrick's Day 2019
           internal: H4sIAAAAAAAAAE2Py06DQBiFf01MkPgYbklmoNwWXRiRdkgHhE5rmV2BQS5DbVrQwnP5gLJ0cRYn3/kWRwVQ4WnbDlK+X77KWgoF7kkBz4Wj22hRYC1HAmmGUWLNdRxLE1ZmYyfH2FnYKqizdBaXvhbXR1B6ceuHi7iqAHCnwMP+KAcBv2IMED9UqDgEMh+JNXe2RTIizdkmp/2YvRKLdDNfv1ib0f23NfvjhylTI6j4KR6ybo82RiLFOsF5t/uOvELSlV9FLJ6ontQpk3U47Uw6BRVlfptOLeJe/BN2QcvZm8nZp06n3S30yJx2TJtQco8a0YouOPOrUA8bcsJuGS+X8wP4A3Z08jAcAQAA
     bread_head:
-      chance: 0.025
+      chance: 0.005
       item:
         ==: org.bukkit.inventory.ItemStack
         v: 1631
